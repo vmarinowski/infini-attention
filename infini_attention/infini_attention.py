@@ -44,7 +44,7 @@ class InfiniAttention(nn.Module):
         self.v = nn.Linear(emb_dim, emb_dim, device = device)
         self.o = nn.Linear(emb_dim, emb_dim, device = device)
         self.elu = nn.ELU()
-        self.freq_cis = RoPE.compute_freq_cis(emb_dim, seq_len, device = device)
+        self.freq_cis = RoPE.compute_freq_cis(emb_dim, seq_len, 10000.0, device = device)
         self.register_buffer('causal', torch.tril(torch.ones(seq_len // n_segments, seq_len // n_segments, device = device)))
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
