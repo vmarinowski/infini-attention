@@ -7,7 +7,7 @@ from typing import Optional
 class InfiniAttention(nn.Module):
     def __init__(self, seq_len: int, emb_dim: int,
                  d_head: int, n_head: int, n_segments: int,
-                 is_causal: Optional[bool] = True, update: str = 'linear', 
+                 is_causal: Optional[bool] = True, update: Optional[str] = 'linear', 
                  use_rope: Optional[bool] = True, device: Optional[str] = 'cpu'):
         super().__init__()
 
