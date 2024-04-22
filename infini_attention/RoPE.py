@@ -12,7 +12,7 @@ def compute_freq_cis(emb_dim: int, seq_len: int, thetha: Optional[float] = 10000
     freqs_cis = torch.polar(torch.ones_like(freqs), freqs)
     return freqs_cis
 
-def RoPE(freq_cis: torch.tensor, query: torch.tensor, key: torch.tensor, device: Optional[str] = 'cpu'):
+def RoPE(freq_cis: torch.Tensor, query: torch.Tensor, key: torch.Tensor, device: Optional[str] = 'cpu'):
 
     b, t, c = query.size()
 
