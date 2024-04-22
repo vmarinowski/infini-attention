@@ -62,9 +62,9 @@ class InfiniAttention(nn.Module):
         if self.use_rope:
             query, key = RoPE.RoPE(self.freq_cis, query, key, self.device)
 
-        query = query.view(batch_size, self.n_head, self.n_segments, self.seq_len)
-        key = key.view(batch_size, self.n_head, self.n_segments, self.seq_len)
-        value = value.view(batch_size, self.n_head, self.n_segments, self.seq_len)
+        query = query.view(batch_size, self.n_head, self.n_segments, self.seq_len // self.n_segments, self.d_head)
+        key = key.view(batch_size, self.n_head, self.n_segments, self.seq_len // self.n_segments, self.d_head)
+        value = value.view(batch_size, self.n_head, self.n_segments, self.seq_len // self.n_segments, self.d_head)
 
         output = []
 
