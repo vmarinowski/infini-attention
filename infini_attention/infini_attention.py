@@ -74,7 +74,7 @@ class InfiniAttention(nn.Module):
             sigma_k = self.elu(key[:, :, idx, :, :]) + 1.0
             A_mem = (sigma_q @ memory) / ((sigma_q @ z) + 1e-6) #Adding 1e-6 for preventing division to 0
 
-            A_dot = query[:, :, idx, :, :] @ key[:, :, idx, :, :]
+            A_dot = query[:, :, idx, :, :] @ key[:, :, idx, :, :].transpose(-2, -1)
             
             if self.is_causal:
               A_dot.masked_fill_(self.causal == 0, float('-inf'))
