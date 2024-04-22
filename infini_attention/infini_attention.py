@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import RoPE
+import infini_attention.RoPE as RoPE
 from typing import Optional
 
 class InfiniAttention(nn.Module):
