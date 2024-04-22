@@ -21,7 +21,7 @@ def RoPE(freq_cis: torch.Tensor, query: torch.Tensor, key: torch.Tensor, device:
     freq_cis = freq_cis.to(device)
 
     query_complex = torch.view_as_complex(query.float().reshape(b, t, c // 2, 2))
-    key_complex = torch.view_as_complex(key.float().reshpae(b, t, c // 2, 2))
+    key_complex = torch.view_as_complex(key.float().reshape(b, t, c // 2, 2))
 
     q_rot = torch.view_as_real(query_complex * freq_cis).flatten(2)
     k_rot = torch.view_as_real(key_complex * freq_cis).flatten(2)
