@@ -15,7 +15,7 @@ in a single Transformer block. This is an unofficial PyTorch implementation of t
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import RoPE
+import infini_attention.RoPE
 from infini_attention.infini_attention import InfiniAttenion
 ```
 ```python
