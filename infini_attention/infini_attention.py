@@ -96,4 +96,4 @@ class InfiniAttention(nn.Module):
             output.append(attention)
         
         attention = torch.concat(output, dim = 2).view(batch_size, self.seq_len, self.emb_dim)
-        return self.out(attention)
+        return self.o(attention)
