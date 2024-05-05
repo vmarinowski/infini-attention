@@ -4,6 +4,7 @@ import torch.nn.functional as F
 import infini_attention.RoPE as RoPE
 from typing import Optional
 
+
 class InfiniAttention(nn.Module):
     def __init__(self, seq_len: int, emb_dim: int,
                  d_head: int, n_head: int, n_segments: int,
@@ -38,22 +39,22 @@ class InfiniAttention(nn.Module):
         self.update = update
         self.device = device
 
-        self.beta = nn.Parameter(torch.ones((1,), device = device)) # -> A learnable scalar from the paper.
-        self.q = nn.Linear(emb_dim, emb_dim, device = device)
-        self.k = nn.Linear(emb_dim, emb_dim, device = device)
-        self.v = nn.Linear(emb_dim, emb_dim, device = device)
-        self.o = nn.Linear(emb_dim, emb_dim, device = device)
+        self.beta = nn.Parameter(torch.ones((1,), device=device)) # -> A learnable scalar from the paper.
+        self.q = nn.Linear(emb_dim, emb_dim, device=device)
+        self.k = nn.Linear(emb_dim, emb_dim, device=device)
+        self.v = nn.Linear(emb_dim, emb_dim, device=device)
+        self.o = nn.Linear(emb_dim, emb_dim, device=device)
         self.elu = nn.ELU()
-        self.freq_cis = RoPE.compute_freq_cis(emb_dim, seq_len, 10000.0, device = device)
-        self.register_buffer('causal', torch.tril(torch.ones(seq_len // n_segments, seq_len // n_segments, device = device)))
+        self.freq_cis = RoPE.compute_freq_cis(emb_dim, seq_len, 10000.0, device=device)
+        self.register_buffer('causal', torch.tril(torch.ones(seq_len // n_segments, seq_len // n_segments, device=device)))
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
 
         batch_size, _, _ = x.size()
 
         #There was no guide for initialization for the parameters below, so I just initialize them fron zero.
-        memory = torch.zeros((self.n_head, self.d_head, self.d_head))
-        z = torch.zeros((self.n_head, self.d_head, 1))
+        memory = torch.zeros((self.n_head, self.d_head, self.d_head)).to(self.device)
+        z = torch.zeros((self.n_head, self.d_head, 1)).to(self.device)
 
         query = self.q(x)
         key = self.k(x)
@@ -72,7 +73,7 @@ class InfiniAttention(nn.Module):
 
             sigma_q = self.elu(query[:, :, idx, :, :]) + 1.0
             sigma_k = self.elu(key[:, :, idx, :, :]) + 1.0
-            A_mem = (sigma_q @ memory) / ((sigma_q @ z) + 1e-6) #Adding 1e-6 for preventing division to 0
+            A_mem = (sigma_q @ memory) / ((sigma_q @ z) + 1e-6)  # Adding 1e-6 for preventing division to 0
 
             A_dot = query[:, :, idx, :, :] @ key[:, :, idx, :, :].transpose(-2, -1)
             
