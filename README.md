@@ -16,7 +16,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import infini_attention.RoPE
-from infini_attention.infini_attention import InfiniAttenion
+from infini_attention.infini_attention import InfiniAttention
 ```
 ```python
 """
