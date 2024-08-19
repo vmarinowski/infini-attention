@@ -9,7 +9,8 @@ class InfiniAttention(nn.Module):
     def __init__(self, seq_len: int, emb_dim: int,
                  d_head: int, n_head: int, n_segments: int,
                  is_causal: Optional[bool] = True, update: Optional[str] = 'linear', 
-                 use_rope: Optional[bool] = True, device: Optional[str] = 'cpu'):
+                 use_rope: Optional[bool] = True, device: Optional[str] = 'cpu',
+                 scale:Optional[int] = 10):
         super().__init__()
 
         """
@@ -38,8 +39,8 @@ class InfiniAttention(nn.Module):
         self.use_rope = use_rope
         self.update = update
         self.device = device
-
-        self.beta = nn.Parameter(torch.ones((1,), device=device)) # -> A learnable scalar from the paper.
+        self.scale = scale
+        self.beta = nn.Parameter(torch.zeros((1,self.n_head,1,1))) # -> A learnable scalar from the paper.
         self.q = nn.Linear(emb_dim, emb_dim, device=device)
         self.k = nn.Linear(emb_dim, emb_dim, device=device)
         self.v = nn.Linear(emb_dim, emb_dim, device=device)
@@ -83,7 +84,7 @@ class InfiniAttention(nn.Module):
             A_dot = F.softmax(A_dot / torch.sqrt(torch.tensor(self.d_head)), dim = -1)
             A_dot =  A_dot @ value[:, :, idx, :, :]
 
-            attention = (F.sigmoid(self.beta) * A_mem) + ((1 - F.sigmoid(self.beta)) * A_dot)
+            attention = (F.sigmoid(self.beta*self.scale) * A_mem) + ((1 - F.sigmoid(self.beta*self.scale)) * A_dot)
 
             #Update
             if self.update == 'linear':
